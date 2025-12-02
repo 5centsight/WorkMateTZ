@@ -1,0 +1,4 @@
+<resources>
+    <style name="Theme.WorkMateTZ" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
+    </style>
+</resources>
