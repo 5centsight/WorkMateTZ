@@ -3,8 +3,10 @@ package com.workmate.workmatetz.presentation.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workmate.workmatetz.domain.usecases.GetNationalitiesUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -14,6 +16,9 @@ class HomeViewModel(
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private val _snackMessages: MutableSharedFlow<String> = MutableSharedFlow()
+    val snackMessages = _snackMessages.asSharedFlow()
 
     init {
         loadNationalities()
@@ -29,7 +34,9 @@ class HomeViewModel(
                     selectedNationality = nationalities.first().first
                 )
             }.onFailure { error ->
-                _uiState.value = HomeUiState.Error(error.message ?: "Failed to load nationalities")
+                val errorMessage = "Failed to load nationalities: ${error.message}"
+                _uiState.value = HomeUiState.Error(errorMessage)
+                showMessage(errorMessage)
             }
         }
     }
@@ -47,4 +54,6 @@ class HomeViewModel(
             _uiState.value = currentState.copy(selectedNationality = nationality)
         }
     }
+
+    suspend fun showMessage(message: String) = _snackMessages.emit(message)
 }

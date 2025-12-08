@@ -33,7 +33,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -48,12 +47,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.workmate.workmatetz.R
 import com.workmate.workmatetz.domain.entity.User
 import com.workmate.workmatetz.presentation.screens.components.BackButton
 import com.workmate.workmatetz.presentation.screens.components.LoadingView
 import com.workmate.workmatetz.presentation.screens.components.PrimaryText
+import com.workmate.workmatetz.presentation.screens.components.SnackBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -62,21 +63,20 @@ fun UserDetailsScreen(
     onBackClick: () -> Unit,
     viewModel: UserDetailsViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState) {
-        if (uiState is UserDetailsUiState.Error) {
-            val error = uiState as UserDetailsUiState.Error
-            snackbarHostState.showSnackbar(error.message)
+    LaunchedEffect(Unit) {
+        viewModel.snackMessages.collect { message ->
+            snackBarHostState.showSnackbar(message)
         }
     }
 
-    LaunchedEffect(seed) {
+    LaunchedEffect(Unit) {
         viewModel.loadUser(seed)
     }
 
-    Scaffold { paddingValues ->
+    Scaffold(snackbarHost = { SnackBar(snackBarHostState) }) { paddingValues ->
         when (uiState) {
             UserDetailsUiState.Loading -> {
                 LoadingView()
@@ -250,7 +250,7 @@ fun TabCard(data: User) {
                             Spacer(Modifier.height(8.dp))
                             PrimaryText("Gender: ${data.gender}")
                             Spacer(Modifier.height(8.dp))
-                            PrimaryText("Age: 33")
+                            PrimaryText("Age: ${data.age}")
                             Spacer(Modifier.height(8.dp))
                             PrimaryText("Date of birth: ${data.date}")
                         }

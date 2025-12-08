@@ -6,8 +6,10 @@ import com.workmate.workmatetz.domain.entity.User
 import com.workmate.workmatetz.domain.usecases.DeleteUserUseCase
 import com.workmate.workmatetz.domain.usecases.GetAllUsersUseCase
 import com.workmate.workmatetz.domain.usecases.GetRandomUserUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -25,6 +27,9 @@ class UsersListViewModel(
 
     private val _allUsers = MutableStateFlow<List<User>>(emptyList())
     val allUsers: StateFlow<List<User>> = _allUsers.asStateFlow()
+
+    private val _snackMessages: MutableSharedFlow<String> = MutableSharedFlow()
+    val snackMessages = _snackMessages.asSharedFlow()
 
     init {
         loadUsers()
@@ -45,8 +50,9 @@ class UsersListViewModel(
                 _uiState.value = UsersListUiState.Success
             }.onFailure { error ->
                 _uiState.value = UsersListUiState.Error(
-                    error.message ?: "Failed to generate user"
+                    "Failed to generate user: ${error.message}"
                 )
+                showMessage("Failed to generate user: ${error.message}")
             }
         }
     }
@@ -60,7 +66,10 @@ class UsersListViewModel(
                     seed = seed,
                     message = "Failed to delete user"
                 )
+                showMessage("Failed to delete user")
             }
         }
     }
+
+    suspend fun showMessage(message: String) = _snackMessages.emit(message)
 }

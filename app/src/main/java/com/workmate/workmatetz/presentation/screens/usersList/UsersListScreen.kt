@@ -38,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.workmate.workmatetz.R
 import com.workmate.workmatetz.domain.entity.User
@@ -53,23 +54,15 @@ fun UsersListScreen(
     onDetailsClick: (String) -> Unit,
     viewModel: UsersListViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val users by viewModel.allUsers.collectAsState(initial = emptyList())
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val users by viewModel.allUsers.collectAsStateWithLifecycle()
     val deleteState by viewModel.deleteState.collectAsState()
 
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(uiState) {
-        if (uiState is UsersListUiState.Error) {
-            val errorState = uiState as UsersListUiState.Error
-            snackBarHostState.showSnackbar(errorState.message)
-        }
-    }
-
-    LaunchedEffect(deleteState) {
-        if (deleteState is DeleteState.Error) {
-            val errorState = deleteState as DeleteState.Error
-            snackBarHostState.showSnackbar(errorState.message)
+    LaunchedEffect(Unit) {
+        viewModel.snackMessages.collect { message ->
+            snackBarHostState.showSnackbar(message)
         }
     }
 
@@ -77,7 +70,6 @@ fun UsersListScreen(
         if (uiState is UsersListUiState.Idle) {
             viewModel.generateUser(gender, nationality)
         }
-
     }
 
     Scaffold(
