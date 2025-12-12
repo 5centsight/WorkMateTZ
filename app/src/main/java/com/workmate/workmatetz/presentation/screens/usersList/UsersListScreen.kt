@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -171,8 +170,7 @@ internal fun UserCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = !isDeleting) { onDetailsClick(data.seed) },
-        elevation = CardDefaults.cardElevation(8.dp)
+            .clickable(enabled = !isDeleting) { onDetailsClick(data.seed) }
     ) {
         Box {
             IconButton(
