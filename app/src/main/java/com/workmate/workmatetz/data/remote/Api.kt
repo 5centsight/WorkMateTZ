@@ -10,26 +10,26 @@ import java.util.concurrent.TimeUnit
 object Api {
     private const val BASE_URL = "https://randomuser.me/"
     private val contentType = "application/json".toMediaType()
-    private val json = Json {
+
+    fun provideJson(): Json = Json {
         isLenient = true
         explicitNulls = false
         ignoreUnknownKeys = true
         coerceInputValues = true
     }
 
-    private val okHttpClient: OkHttpClient = OkHttpClient.Builder()
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.SECONDS)
         .writeTimeout(5, TimeUnit.SECONDS)
         .build()
 
-    private val retrofit = Retrofit.Builder()
+    fun provideRetrofit(okHttpClient: OkHttpClient, json: Json): Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(json.asConverterFactory(contentType))
         .client(okHttpClient)
         .build()
 
-    val apiService: RandomUserApi by lazy {
+    fun provideApiService(retrofit: Retrofit): RandomUserApi =
         retrofit.create(RandomUserApi::class.java)
-    }
 }

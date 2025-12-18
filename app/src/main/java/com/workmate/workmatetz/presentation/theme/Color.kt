@@ -1,4 +1,5 @@
 package com.workmate.workmatetz.presentation.theme
+
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF185701)
