@@ -37,13 +37,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.workmate.workmatetz.R
 import com.workmate.workmatetz.domain.entity.User
 import com.workmate.workmatetz.presentation.screens.components.LoadingView
 import com.workmate.workmatetz.presentation.screens.components.SnackBar
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun UsersListScreen(
@@ -51,7 +51,7 @@ fun UsersListScreen(
     nationality: String,
     onGenerateClick: () -> Unit,
     onDetailsClick: (String) -> Unit,
-    viewModel: UsersListViewModel = koinViewModel()
+    viewModel: UsersListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val users by viewModel.allUsers.collectAsStateWithLifecycle()

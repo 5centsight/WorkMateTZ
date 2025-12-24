@@ -32,17 +32,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.workmate.workmatetz.presentation.screens.components.BackButton
 import com.workmate.workmatetz.presentation.screens.components.LoadingView
 import com.workmate.workmatetz.presentation.screens.components.SnackBar
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
     onGenerateClick: (String, String) -> Unit,
     onBackClick: () -> Unit,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -113,7 +113,7 @@ private fun HomeContent(
     selectedGender: String,
     selectedNationality: String,
     nationalities: List<Pair<String, String>>,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     Column(Modifier.fillMaxSize()) {
         Text(

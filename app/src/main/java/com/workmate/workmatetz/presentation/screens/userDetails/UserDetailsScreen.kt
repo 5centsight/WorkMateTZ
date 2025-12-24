@@ -47,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.workmate.workmatetz.R
@@ -55,13 +56,12 @@ import com.workmate.workmatetz.presentation.screens.components.BackButton
 import com.workmate.workmatetz.presentation.screens.components.LoadingView
 import com.workmate.workmatetz.presentation.screens.components.PrimaryText
 import com.workmate.workmatetz.presentation.screens.components.SnackBar
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun UserDetailsScreen(
     seed: String,
     onBackClick: () -> Unit,
-    viewModel: UserDetailsViewModel = koinViewModel()
+    viewModel: UserDetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackBarHostState = remember { SnackbarHostState() }

@@ -9,8 +9,9 @@ import com.workmate.workmatetz.domain.repository.RandomUserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class RandomUserRepositoryImpl(
+class RandomUserRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : RandomUserRepository {

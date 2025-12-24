@@ -30,6 +30,6 @@ object Api {
         .client(okHttpClient)
         .build()
 
-    fun provideApiService(retrofit: Retrofit): RandomUserApi =
+    fun apiService(retrofit: Retrofit): RandomUserApi =
         retrofit.create(RandomUserApi::class.java)
 }

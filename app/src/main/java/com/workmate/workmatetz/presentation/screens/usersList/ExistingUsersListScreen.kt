@@ -10,23 +10,30 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.workmate.workmatetz.presentation.screens.components.SnackBar
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ExistingUsersListScreen(
     onGenerateClick: () -> Unit,
     onDetailsClick: (String) -> Unit,
-    viewModel: UsersListViewModel = koinViewModel()
+    viewModel: UsersListViewModel = hiltViewModel()
 ) {
     val users by viewModel.allUsers.collectAsState(initial = emptyList())
     val deleteState by viewModel.deleteState.collectAsState()
 
     val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.snackMessages.collect { message ->
+            snackBarHostState.showSnackbar(message)
+        }
+    }
 
     Scaffold(
         floatingActionButton = {

@@ -1,15 +1,41 @@
 package com.workmate.workmatetz.di
 
+import com.workmate.workmatetz.domain.usecases.DeleteUserUseCase
+import com.workmate.workmatetz.domain.usecases.GetAllUsersUseCase
+import com.workmate.workmatetz.domain.usecases.GetNationalitiesUseCase
+import com.workmate.workmatetz.domain.usecases.GetRandomUserUseCase
+import com.workmate.workmatetz.domain.usecases.GetUserBySeedUseCase
 import com.workmate.workmatetz.presentation.screens.home.HomeViewModel
 import com.workmate.workmatetz.presentation.screens.userDetails.UserDetailsViewModel
 import com.workmate.workmatetz.presentation.screens.usersList.UsersListViewModel
-import org.koin.core.module.dsl.viewModel
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
+@Module
+@InstallIn(ViewModelComponent::class)
+object ViewModelModule {
 
-val viewModelModule = module {
+    @Provides
+    @ViewModelScoped
+    fun provideHomeViewModel(
+        getNationalitiesUseCase: GetNationalitiesUseCase
+    ): HomeViewModel = HomeViewModel(getNationalitiesUseCase)
 
-    viewModel { HomeViewModel(get()) }
-    viewModel { UsersListViewModel(get(), get(), get()) }
-    viewModel { UserDetailsViewModel(get()) }
+    @Provides
+    @ViewModelScoped
+    fun provideUsersListViewModel(
+        getRandomUserUseCase: GetRandomUserUseCase,
+        getAllUsersUseCase: GetAllUsersUseCase,
+        deleteUserUseCase: DeleteUserUseCase
+    ): UsersListViewModel =
+        UsersListViewModel(getRandomUserUseCase, getAllUsersUseCase, deleteUserUseCase)
+
+    @Provides
+    @ViewModelScoped
+    fun providesUserDetailsViewModel(
+        getUserBySeedUseCase: GetUserBySeedUseCase
+    ): UserDetailsViewModel = UserDetailsViewModel(getUserBySeedUseCase)
 }
