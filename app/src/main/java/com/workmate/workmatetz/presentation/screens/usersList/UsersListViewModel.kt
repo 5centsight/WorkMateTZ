@@ -3,9 +3,11 @@ package com.workmate.workmatetz.presentation.screens.usersList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.workmate.workmatetz.domain.entity.User
+import com.workmate.workmatetz.domain.usecases.CopyUserToClipboardUseCase
 import com.workmate.workmatetz.domain.usecases.DeleteUserUseCase
 import com.workmate.workmatetz.domain.usecases.GetAllUsersUseCase
 import com.workmate.workmatetz.domain.usecases.GetRandomUserUseCase
+import com.workmate.workmatetz.domain.usecases.ShareUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +21,9 @@ import javax.inject.Inject
 class UsersListViewModel @Inject constructor(
     private val getRandomUserUseCase: GetRandomUserUseCase,
     private val getAllUsersUseCase: GetAllUsersUseCase,
-    private val deleteUserUseCase: DeleteUserUseCase
+    private val deleteUserUseCase: DeleteUserUseCase,
+    private val shareUserUseCase: ShareUserUseCase,
+    private val copyUserToClipboardUseCase: CopyUserToClipboardUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UsersListUiState>(UsersListUiState.Idle)
@@ -70,6 +74,26 @@ class UsersListViewModel @Inject constructor(
                     message = "Failed to delete user"
                 )
                 showMessage("Failed to delete user")
+            }
+        }
+    }
+
+    fun shareUser(seed: String) {
+        viewModelScope.launch {
+            shareUserUseCase(seed).onSuccess {
+                showMessage("User shared successfully")
+            }.onFailure { error ->
+                showMessage("Failed to share user: ${error.message}")
+            }
+        }
+    }
+
+    fun copyUserToClipboard(seed: String) {
+        viewModelScope.launch {
+            copyUserToClipboardUseCase(seed).onSuccess {
+                showMessage("User info copied to clipboard")
+            }.onFailure { error ->
+                showMessage("Failed to copy user: ${error.message}")
             }
         }
     }

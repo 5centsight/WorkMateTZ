@@ -55,7 +55,9 @@ fun ExistingUsersListScreen(
                     deleteState = deleteState,
                     paddingValues = paddingValues,
                     onDetailsClick = onDetailsClick,
-                    onDeleteClick = { viewModel.deleteUser(it) }
+                    onDeleteClick = { viewModel.deleteUser(it) },
+                    onShareClick = { viewModel.shareUser(it) },
+                    onCopyClick = { viewModel.copyUserToClipboard(it) }
                 )
             }
         }

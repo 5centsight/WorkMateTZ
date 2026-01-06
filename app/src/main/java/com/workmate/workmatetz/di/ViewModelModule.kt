@@ -1,10 +1,12 @@
 package com.workmate.workmatetz.di
 
+import com.workmate.workmatetz.domain.usecases.CopyUserToClipboardUseCase
 import com.workmate.workmatetz.domain.usecases.DeleteUserUseCase
 import com.workmate.workmatetz.domain.usecases.GetAllUsersUseCase
 import com.workmate.workmatetz.domain.usecases.GetNationalitiesUseCase
 import com.workmate.workmatetz.domain.usecases.GetRandomUserUseCase
 import com.workmate.workmatetz.domain.usecases.GetUserBySeedUseCase
+import com.workmate.workmatetz.domain.usecases.ShareUserUseCase
 import com.workmate.workmatetz.presentation.screens.home.HomeViewModel
 import com.workmate.workmatetz.presentation.screens.userDetails.UserDetailsViewModel
 import com.workmate.workmatetz.presentation.screens.usersList.UsersListViewModel
@@ -29,9 +31,17 @@ object ViewModelModule {
     fun provideUsersListViewModel(
         getRandomUserUseCase: GetRandomUserUseCase,
         getAllUsersUseCase: GetAllUsersUseCase,
-        deleteUserUseCase: DeleteUserUseCase
+        deleteUserUseCase: DeleteUserUseCase,
+        shareUserUseCase: ShareUserUseCase,
+        copyUserToClipboardUseCase: CopyUserToClipboardUseCase
     ): UsersListViewModel =
-        UsersListViewModel(getRandomUserUseCase, getAllUsersUseCase, deleteUserUseCase)
+        UsersListViewModel(
+            getRandomUserUseCase,
+            getAllUsersUseCase,
+            deleteUserUseCase,
+            shareUserUseCase,
+            copyUserToClipboardUseCase
+        )
 
     @Provides
     @ViewModelScoped

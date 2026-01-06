@@ -15,8 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,7 +94,9 @@ fun UsersListScreen(
                         deleteState = deleteState,
                         paddingValues = paddingValues,
                         onDetailsClick = onDetailsClick,
-                        onDeleteClick = { viewModel.deleteUser(it) }
+                        onDeleteClick = { viewModel.deleteUser(it) },
+                        onShareClick = { viewModel.shareUser(it) },
+                        onCopyClick = { viewModel.copyUserToClipboard(it) }
                     )
                     LoadingView()
                 }
@@ -105,7 +111,9 @@ fun UsersListScreen(
                             deleteState = deleteState,
                             paddingValues = paddingValues,
                             onDetailsClick = onDetailsClick,
-                            onDeleteClick = { viewModel.deleteUser(it) }
+                            onDeleteClick = { viewModel.deleteUser(it) },
+                            onShareClick = { viewModel.shareUser(it) },
+                            onCopyClick = { viewModel.copyUserToClipboard(it) }
                         )
                     }
                 }
@@ -120,7 +128,9 @@ internal fun UsersListContent(
     deleteState: DeleteState,
     paddingValues: PaddingValues,
     onDetailsClick: (String) -> Unit,
-    onDeleteClick: (String) -> Unit
+    onDeleteClick: (String) -> Unit,
+    onShareClick: (String) -> Unit,
+    onCopyClick: (String) -> Unit
 ) {
     if (users.isEmpty()) {
         EmptyStateView()
@@ -140,6 +150,8 @@ internal fun UsersListContent(
                     data = user,
                     onDetailsClick = { onDetailsClick(user.seed) },
                     onDeleteClick = onDeleteClick,
+                    onShareClick = onShareClick,
+                    onCopyClick = onCopyClick
                 )
             }
         }
@@ -165,8 +177,12 @@ internal fun UserCard(
     isDeleting: Boolean,
     data: User,
     onDetailsClick: (String) -> Unit,
-    onDeleteClick: (String) -> Unit
+    onDeleteClick: (String) -> Unit,
+    onShareClick: (String) -> Unit,
+    onCopyClick: (String) -> Unit
 ) {
+    var showDropdown by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,12 +193,39 @@ internal fun UserCard(
                 modifier = Modifier
                     .padding(4.dp)
                     .align(Alignment.TopEnd),
-                onClick = { onDeleteClick(data.seed) }
+                enabled = !showDropdown,
+                onClick = { showDropdown = true }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Clear,
-                    contentDescription = "delete"
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "Options"
                 )
+
+                DropdownMenu(
+                    expanded = showDropdown,
+                    onDismissRequest = { showDropdown = false }) {
+                    DropdownMenuItem(
+                        text = { Text("Copy") },
+                        onClick = {
+                            onCopyClick(data.seed)
+                            showDropdown = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Share") },
+                        onClick = {
+                            onShareClick(data.seed)
+                            showDropdown = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Delete") },
+                        onClick = {
+                            onDeleteClick(data.seed)
+                            showDropdown = false
+                        }
+                    )
+                }
             }
 
             Row(
