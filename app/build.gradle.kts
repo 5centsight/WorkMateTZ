@@ -53,9 +53,9 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.material.icons.core)
 
-    implementation(libs.okhttp)
+    implementation(libs.okhttp.logginginterceptor)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.retrofit.serialization.converter)
     implementation(libs.retrofit)
 
     implementation(libs.hilt.android)
